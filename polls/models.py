@@ -63,3 +63,8 @@ class Branch(models.Model):
         with connection.cursor() as cursor:
             branch_name = self.name
             cursor.execute("CALL DOLT_BRANCH('" + branch_name + "')")
+
+    def delete(self, *args, **kwargs):
+        with connection.cursor() as cursor:
+            branch_name = self.name
+            cursor.execute("CALL DOLT_BRANCH('-D', '" + branch_name + "')")
