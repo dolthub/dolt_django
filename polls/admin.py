@@ -1,6 +1,8 @@
 from django.contrib import admin
+from django.forms import TextInput, Textarea
+from django.db import models
 
-from .models import Choice, Question
+from .models import Choice, Question, Branch
 
 
 class ChoiceInline(admin.TabularInline):
@@ -21,3 +23,16 @@ class QuestionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Question, QuestionAdmin)
+
+class BranchAdmin(admin.ModelAdmin):
+    def get_readonly_fields(self, request, obj=None):
+        if obj: # obj is not None, so this is an edit
+            return ['name', 'hash', 'latest_committer', 'latest_committer_email', 'latest_commit_date', 'latest_commit_message']
+        else: # This is an addition
+            return ['hash', 'latest_committer', 'latest_committer_email', 'latest_commit_date', 'latest_commit_message']
+
+    formfield_overrides = {
+        models.TextField: {'widget': Textarea(attrs={'rows':1, 'cols':30})},
+        }
+    
+admin.site.register(Branch, BranchAdmin)

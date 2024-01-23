@@ -42,3 +42,24 @@ class Choice(models.Model):
 
         _dolt_commit("Saved a choice")
 
+class Branch(models.Model):
+    """ Expose the `dolt_branches` system table """
+    name = models.CharField(primary_key=True, max_length=400)
+    hash = models.CharField(max_length=20)
+    latest_committer = models.CharField(max_length=100)
+    latest_committer_email = models.CharField(max_length=100)
+    latest_commit_date = models.DateTimeField()
+    latest_commit_message = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = "dolt_branches"
+        verbose_name_plural = "branches"
+
+    def __str__(self):
+        return self.name
+        
+    def save(self, *args, **kwargs):
+        with connection.cursor() as cursor:
+            branch_name = self.name
+            cursor.execute("CALL DOLT_BRANCH('" + branch_name + "')")
