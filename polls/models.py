@@ -74,6 +74,7 @@ class Branch(models.Model):
             cursor.execute("SELECT active_branch();")
             return cursor.fetchone()[0]
 
+    @admin.display(boolean=True)
     def is_active(self):
         if ( self.name == self.active_branch() ):
             return True
