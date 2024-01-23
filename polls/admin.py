@@ -23,6 +23,9 @@ class QuestionAdmin(admin.ModelAdmin):
 admin.site.register(Question, QuestionAdmin)
 
 class BranchAdmin(admin.ModelAdmin):
+    def has_change_permission(self, request, obj=None):
+        return False
+    
     def get_readonly_fields(self, request, obj=None):
         if obj: # obj is not None, so this is an edit
             return ['name', 'hash', 'latest_committer', 'latest_committer_email', 'latest_commit_date', 'latest_commit_message']
