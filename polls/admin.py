@@ -23,6 +23,8 @@ class QuestionAdmin(admin.ModelAdmin):
 admin.site.register(Question, QuestionAdmin)
 
 class BranchAdmin(admin.ModelAdmin):
+    list_display = ['name', 'is_active']
+    
     def has_change_permission(self, request, obj=None):
         return False
     

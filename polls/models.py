@@ -68,3 +68,14 @@ class Branch(models.Model):
         with connection.cursor() as cursor:
             branch_name = self.name
             cursor.execute("CALL DOLT_BRANCH('-D', '" + branch_name + "')")
+
+    def active_branch(self):
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT active_branch();")
+            return cursor.fetchone()[0]
+
+    def is_active(self):
+        if ( self.name == self.active_branch() ):
+            return True
+        else:
+            return False
