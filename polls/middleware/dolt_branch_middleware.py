@@ -7,8 +7,14 @@ class DoltBranchMiddleware:
 
     def __call__(self, request):
         with connection.cursor() as cursor:
-            cursor.execute("CALL DOLT_CHECKOUT('main')")
+            branch_name = self.get_branch(request)
+            cursor.execute("CALL DOLT_CHECKOUT('" + branch_name + "')")
 
         response = self.get_response(request)
 
         return response
+
+    def get_branch(self, request, *view_args, **view_kwargs):
+        if "active_branch" in request.session:
+            return request.session.get("active_branch")
+        return "main"

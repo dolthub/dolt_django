@@ -1,7 +1,6 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 
 from .models import Choice, Question, Branch, Commit
-
 
 class ChoiceInline(admin.TabularInline):
     model = Choice
@@ -37,9 +36,17 @@ class CommitAdmin(admin.ModelAdmin):
     readonly = ['commit_hash', 'committer', 'email', 'date', 'message']
 
 admin.site.register(Commit, CommitAdmin)
-    
+
+@admin.action(description="Set selected branch as active")
+def set_active(modeladmin, request, queryset):
+    if queryset.count() != 1:
+        messages.error(request, "Error: More than one branch selected.")
+        return
+    request.session['active_branch'] = queryset[0].name
+
 class BranchAdmin(admin.ModelAdmin):
     list_display = ['name', 'is_active']
+    actions = [set_active]
     
     def has_change_permission(self, request, obj=None):
         return False
@@ -49,5 +56,5 @@ class BranchAdmin(admin.ModelAdmin):
             return ['name', 'hash', 'latest_committer', 'latest_committer_email', 'latest_commit_date', 'latest_commit_message']
         else: # This is an addition
             return ['hash', 'latest_committer', 'latest_committer_email', 'latest_commit_date', 'latest_commit_message']
-    
+
 admin.site.register(Branch, BranchAdmin)
