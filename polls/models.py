@@ -57,7 +57,14 @@ class Commit(models.Model):
 
     def __str__(self):
         return self.commit_hash
-        
+
+class BranchQuerySet(models.QuerySet):
+    def delete(self, *args, **kwargs):
+        for obj in self:
+            with connection.cursor() as cursor:
+                branch_name = obj.name
+                cursor.execute("CALL DOLT_BRANCH('-D', '" + branch_name + "')")
+    
 class Branch(models.Model):
     """ Expose the `dolt_branches` system table """
     name = models.CharField(primary_key=True, max_length=400)
@@ -66,6 +73,8 @@ class Branch(models.Model):
     latest_committer_email = models.CharField(max_length=100)
     latest_commit_date = models.DateTimeField()
     latest_commit_message = models.TextField()
+
+    objects = BranchQuerySet.as_manager()
 
     class Meta:
         managed = False
@@ -96,3 +105,7 @@ class Branch(models.Model):
             return True
         else:
             return False
+
+    def merge(self, merge_branch):
+        with connection.cursor() as cursor:
+            cursor.execute("CALL dolt_merge('" + merge_branch +"')")

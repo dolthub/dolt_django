@@ -1,4 +1,5 @@
 from django.contrib import admin, messages
+from django.shortcuts import get_object_or_404
 
 from .models import Choice, Question, Branch, Commit
 
@@ -44,9 +45,24 @@ def set_active(modeladmin, request, queryset):
         return
     request.session['active_branch'] = queryset[0].name
 
+@admin.action(description="Merge selected branch into active branch")
+def merge(modeladmin, request, queryset):
+    if queryset.count() != 1:
+        messages.error(request, "Error: More than one branch selected.")
+        return
+    
+    active_branch_name = request.session.get('active_branch')
+    merge_branch_name = queryset[0].name
+    if ( merge_branch_name == active_branch_name ):
+        messages.error(request, "Error: Select a branch that is not active to merge.")
+        return
+    
+    base_branch = get_object_or_404(Branch, name=active_branch_name)
+    base_branch.merge(merge_branch_name)
+    
 class BranchAdmin(admin.ModelAdmin):
     list_display = ['name', 'is_active']
-    actions = [set_active]
+    actions = [set_active, merge]
     
     def has_change_permission(self, request, obj=None):
         return False
