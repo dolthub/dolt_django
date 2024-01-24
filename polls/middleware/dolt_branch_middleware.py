@@ -7,7 +7,7 @@ class DoltBranchMiddleware:
 
     def __call__(self, request):
         with connection.cursor() as cursor:
-            cursor.execute("CALL DOLT_CHECKOUT('test_branch')")
+            cursor.execute("CALL DOLT_CHECKOUT('main')")
 
         response = self.get_response(request)
 

@@ -42,6 +42,22 @@ class Choice(models.Model):
 
         _dolt_commit("Saved a choice")
 
+class Commit(models.Model):
+    commit_hash = models.CharField(primary_key=True, max_length=20)
+    committer = models.CharField(max_length=100)
+    email = models.CharField(max_length=100)
+    date = models.DateTimeField()
+    message = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = "dolt_log"
+        verbose_name_plural = "commits"
+        ordering = ["-date"]
+
+    def __str__(self):
+        return self.commit_hash
+        
 class Branch(models.Model):
     """ Expose the `dolt_branches` system table """
     name = models.CharField(primary_key=True, max_length=400)

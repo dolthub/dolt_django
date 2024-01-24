@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Choice, Question, Branch
+from .models import Choice, Question, Branch, Commit
 
 
 class ChoiceInline(admin.TabularInline):
@@ -22,6 +22,22 @@ class QuestionAdmin(admin.ModelAdmin):
 
 admin.site.register(Question, QuestionAdmin)
 
+class CommitAdmin(admin.ModelAdmin):
+    list_display = ['commit_hash', 'committer', 'date', 'message']
+    
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    readonly = ['commit_hash', 'committer', 'email', 'date', 'message']
+
+admin.site.register(Commit, CommitAdmin)
+    
 class BranchAdmin(admin.ModelAdmin):
     list_display = ['name', 'is_active']
     
