@@ -1,1 +1,1 @@
-Django Sample App
+# Dolt/Django Sample App
