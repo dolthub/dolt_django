@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'polls.middleware.dolt_branch_middleware.DoltBranchMiddleware',
+    'polls.middleware.dolt_commit_middleware.DoltAutoCommitMiddleware',
 ]
 
 ROOT_URLCONF = 'dolt_django.urls'
