@@ -28,14 +28,14 @@ class CommitAdmin(admin.ModelAdmin):
     def has_change_permission(self, request, obj=None):
         return False
 
+    def has_add_permission(self, request, obj=None):
+        return False
+    
     def has_delete_permission(self, request, obj=None):
         return False
 
-    def has_add_permission(self, request, obj=None):
-        return False
-
     readonly = ['commit_hash', 'committer', 'email', 'date', 'message']
-
+     
 admin.site.register(Commit, CommitAdmin)
 
 @admin.action(description="Set selected branch as active")
@@ -59,6 +59,10 @@ def merge(modeladmin, request, queryset):
     
     base_branch = get_object_or_404(Branch, name=active_branch_name)
     base_branch.merge(merge_branch_name)
+
+    success_message = 'Successfully Merged ' + merge_branch_name + ' branch into ' + active_branch_name + ' branch'
+    
+    messages.add_message(request, messages.INFO, success_message)
     
 class BranchAdmin(admin.ModelAdmin):
     list_display = ['name', 'is_active']

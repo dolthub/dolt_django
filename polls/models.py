@@ -27,8 +27,8 @@ class Question(models.Model):
     def save(self, *args, **kwargs):
         super(Question, self).save(*args, **kwargs)
 
-        _dolt_commit("Saved a question")        
-    
+        _dolt_commit("Saved a question")
+
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
@@ -43,7 +43,7 @@ class Choice(models.Model):
         _dolt_commit("Saved a choice")
 
 class Commit(models.Model):
-    commit_hash = models.CharField(primary_key=True, max_length=20)
+    commit_hash = models.CharField(primary_key=True, max_length=32)
     committer = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
     date = models.DateTimeField()
@@ -68,7 +68,7 @@ class BranchQuerySet(models.QuerySet):
 class Branch(models.Model):
     """ Expose the `dolt_branches` system table """
     name = models.CharField(primary_key=True, max_length=400)
-    hash = models.CharField(max_length=20)
+    hash = models.CharField(max_length=32)
     latest_committer = models.CharField(max_length=100)
     latest_committer_email = models.CharField(max_length=100)
     latest_commit_date = models.DateTimeField()
